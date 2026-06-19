@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Government Employee ID Card Generator</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* ===== Navigation Header ===== */
+.nav-header {
+  background-color: #0b5334;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.btn-nav-home {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 15px;
+}
+.btn-nav-home:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+.nav-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+h1 {
+  text-align: center;
+  color: #0b5334;
+  font-size: 24px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+/* ===== Form Styles ===== */
+.form-container {
+  max-width: 650px;
+  margin: 0 auto 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.full-width {
+  grid-column: span 2;
+}
+label {
+  font-weight: 600;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 5px;
+  color: #4b5563;
+}
+input, select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+input:focus, select:focus {
+  border-color: #0b5334;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(11, 83, 52, 0.1);
+}
+.btn-submit {
+  grid-column: span 2;
+  background-color: #0b5334;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+}
+.btn-submit:hover {
+  background-color: #073822;
+}
+
+/* Print Button Layout Below Preview */
+.btn-group-actions {
+  display: none;
+  justify-content: center;
+  max-width: 210mm;
+  margin: 20px auto 0 auto;
+}
+.btn-action-print {
+  padding: 12px 35px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  background-color: #1e3a8a;
+  min-width: 160px;
+}
+.btn-action-print:hover {
+  background-color: #172554;
+}
+
+/* ===== ID Card Layout ===== */
+#idCardPrintArea {
+  display: none; 
+  max-width: 210mm; 
+  margin: 10px auto 30px auto;
+  background: transparent;
+  box-sizing: border-box;
+}
+.cards-container-box {
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
+  gap: 10mm;
+  flex-wrap: wrap; 
+}
+
+/* Single Card Box */
+.card-box {
+  width: 95mm;
+  height: 60mm;
+  border: 1.5px solid #0b5334;
+  border-radius: 8px;
+  position: relative;
+  box-sizing: border-box;
+  background: #ffffff !important;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Watermark */
+.gov-watermark {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32mm;
+  height: 32mm;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Background Wave */
+.card-background-design {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 18mm;
+  background: linear-gradient(135deg, rgba(11, 83, 52, 0.05) 0%, rgba(20, 122, 79, 0.08) 100%) !important;
+  clip-path: polygon(0 50%, 25% 65%, 60% 30%, 100% 55%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: 1;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Header Section */
+.card-header {
+  background: linear-gradient(135deg, #0b5334 0%, #147a4f 100%) !important;
+  position: relative;
+  padding: 4px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 10px;
+  height: 12mm;
+  box-sizing: border-box;
+  z-index: 2;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.card-header::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #eab308 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.header-logo {
+  width: 9mm;
+  height: 9mm;
+  z-index: 3;
+  object-fit: contain;
+}
+.header-text {
+  text-align: center; 
+}
+.header-text h2 {
+  margin: 0;
+  font-size: 11px; 
+  color: #ffffff !important;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+.header-text h3 {
+  margin: 1px 0 0 0;
+  font-size: 9px; 
+  color: #f3f4f6 !important;
+  font-weight: 500;
+}
+
+/* Card Title Bar */
+.card-title-bar {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0b5334 !important;
+  padding: 3px 0;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 2;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Content Area */
+.card-body {
+  display: flex;
+  padding: 6px 10px;
+  height: 37mm;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+.photo-container {
+  width: 22mm;
+  height: 27mm;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+}
+.photo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.placeholder-text {
+  font-size: 8px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Details Table */
+.details-container {
+  flex: 1;
+  padding-left: 10px;
+  position: relative;
+  z-index: 3;
+  overflow: hidden;
+}
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.details-table td {
+  padding: 1px 0;
+  font-size: 9px;
+  color: #0f172a !important;
+  vertical-align: top;
+  line-height: 1.2;
+  letter-spacing: normal !important; 
+  word-spacing: normal !important;   
+  white-space: nowrap;
+}
+.details-table tr.address-row td {
+  white-space: normal !important;
+  word-break: break-word;
+}
+.label-col {
+  font-weight: 700;
+  color: #1e293b !important;
+  width: 32%;
+}
+
+/* QR Code */
+.qr-container {
+  width: 24mm;
+  height: 24mm;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+}
+.qr-container img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Footer & Signature Section */
+.card-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 8mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-top: 1px solid #e2e8f0;
+  font-size: 8px;
+  font-weight: 700;
+  color: #334155 !important;
+  z-index: 2;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.signature-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.holders-signature-box {
+  width: 20mm;
+  height: 4mm;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1;
+  border-radius: 2px;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.signature-line {
+  border-top: 1px dashed #475569;
+  padding-top: 1px;
+  min-width: 22mm;
+  text-align: center;
+}
+
+/* ===== PRINT CONFIGURATION ===== */
+@media print {
+  body {
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+    width: 210mm;
+  }
+  .form-container, h1, .btn-group-actions, .nav-header {
+    display: none !important; 
+  }
+  #idCardPrintArea {
+    display: block !important;
+    margin: 0;
+    padding: 20mm 0; 
+    width: 210mm;
+  }
+  .cards-container-box {
+    display: flex !important;
+    flex-direction: row !important; 
+    justify-content: center !important;
+    gap: 10mm !important; 
+    flex-wrap: nowrap !important; 
+    width: 200mm;
+    margin: 0 auto;
+  }
+  .card-box {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .details-table td {
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="nav-header">
+  <button class="btn-nav-home" onclick="goToHomePage()">Home</button>
+  <span class="nav-title">ID Card Portal</span>
+</div>
+
+<h1 id="mainHeading">Government Employee ID Card Generator</h1>
+
+<div class="form-container" id="inputFormContainer">
+  <div class="form-grid">
+    <div>
+      <label>Select State *</label>
+      <select id="stateSelect">
+        <option value="TG">Telangana</option>
+        <option value="AP">Andhra Pradesh</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Department *</label>
+      <input type="text" id="deptInput" value="DEPARTMENT OF EDUCATION" placeholder="e.g. DEPARTMENT OF EDUCATION">
+    </div>
+
+    <div class="full-width">
+      <label>Employee Name *</label>
+      <input type="text" id="teacherName" placeholder="e.g. Dontharapu Ramesh">
+    </div>
+
+    <div>
+      <label>Father's Name</label>
+      <input type="text" id="fatherName" placeholder="e.g. Father Name">
+    </div>
+
+    <div>
+      <label>ID Number *</label>
+      <input type="text" id="idNo" placeholder="e.g. 21815481">
+    </div>
+
+    <div>
+      <label>Date of Birth (D.O.B) *</label>
+      <input type="date" id="dob">
+    </div>
+
+    <div>
+      <label>Designation</label>
+      <input type="text" id="designation" placeholder="e.g. S.A Telugu">
+    </div>
+
+    <div>
+      <label>Date of Appointment</label>
+      <input type="date" id="appointed">
+    </div>
+
+    <div>
+      <label>Mobile Number (Cell No)</label>
+      <input type="tel" id="cellNo" pattern="[0-9]*" maxlength="10" placeholder="e.g. 9876543210" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div>
+
+    <div>
+      <label>Blood Group</label>
+      <select id="bloodGrp">
+        <option value="O+">O+</option>
+        <option value="A+">A+</option>
+        <option value="B+">B+</option>
+        <option value="AB+">AB+</option>
+        <option value="O-">O-</option>
+        <option value="A-">A-</option>
+        <option value="B-">B-</option>
+        <option value="AB-">AB-</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Health ID No</label>
+      <input type="text" id="healthNo" placeholder="e.g. H12345">
+    </div>
+
+    <div>
+      <label>Height (in cms)</label>
+      <input type="tel" id="height" pattern="[0-9]*" maxlength="3" placeholder="e.g. 170" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div>
+
+    <div class="full-width">
+      <label>Working Address *</label>
+      <input type="text" id="workAddress" placeholder="e.g. ZPHS Vidya Nagar, Nalgonda">
+    </div>
+
+    <div class="full-width">
+      <label>Residential Address</label>
+      <input type="text" id="resAddress" placeholder="e.g. H.No: 1-2, Nalgonda Village and Mandal, Nalgonda dist.">
+    </div>
+
+    <div class="full-width">
+      <label>Upload Photo</label>
+      <input type="file" id="photoInput" accept="image/*" onchange="previewImage(event)">
+    </div>
+
+    <button class="btn-submit" onclick="generateIDCard()">Generate ID Card Preview</button>
+  </div>
+</div>
+
+<div class="btn-group-actions" id="actionButtonsGroup">
+  <button class="btn-action-print" onclick="triggerSystemPrint()">Print / Save as PDF</button>
+</div>
+
+<div id="idCardPrintArea">
+  <div class="cards-container-box">
+    
+    <div class="card-box">
+      <div class="card-background-design"></div>
+      <img class="gov-watermark" id="cardWatermarkFront" src="" alt="Watermark">
+      
+      <div class="card-header">
+        <img class="header-logo" id="cardLogoFront" src="" alt="Logo">
+        <div class="header-text">
+          <h2 id="lblStateTitleFront">GOVERNMENT OF TELANGANA</h2>
+          <h3 id="lblDeptTitleFront">DEPARTMENT OF EDUCATION</h3>
+        </div>
+      </div>
+      <div class="card-title-bar">EMPLOYEE IDENTITY CARD</div>
+      
+      <div class="card-body">
+        <div class="photo-container">
+          <img id="cardPhoto" src="" style="display:none;">
+          <span id="photoPlaceholder" class="placeholder-text">PHOTO</span>
+        </div>
+        <div class="details-container">
+          <table class="details-table">
+            <tr><td class="label-col">Name</td><td>: <span id="lblName"></span></td></tr>
+            <tr><td class="label-col">Father's name</td><td>: <span id="lblFather"></span></td></tr>
+            <tr><td class="label-col">ID No</td><td>: <span id="lblID"></span></td></tr>
+            <tr><td class="label-col">Date of birth</td><td>: <span id="lblDOB"></span></td></tr>
+            <tr><td class="label-col">Designation</td><td>: <span id="lblDesign"></span></td></tr>
+            <tr><td class="label-col">Appointed on</td><td>: <span id="lblAppoint"></span></td></tr>
+            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Office address</td><td>: <span id="lblWorkAddr"></span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="signature-section">
+          <div class="holders-signature-box"></div>
+          <span>Employee's sign</span>
+        </div>
+        <span class="signature-line">Issuing authority</span>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <div class="card-background-design"></div>
+      <img class="gov-watermark" id="cardWatermarkBack" src="" alt="Watermark">
+      
+      <div class="card-header">
+        <img class="header-logo" id="cardLogoBack" src="" alt="Logo">
+        <div class="header-text">
+          <h2 id="lblStateTitleBack">GOVERNMENT OF TELANGANA</h2>
+          <h3 id="lblDeptTitleBack">DEPARTMENT OF EDUCATION</h3>
+        </div>
+      </div>
+      <div class="card-title-bar">PERSONAL DETAILS</div>
+      
+      <div class="card-body">
+        <div class="qr-container">
+          <img id="cardQR" src="" alt="QR">
+        </div>
+        <div class="details-container" style="padding-left:12px;">
+          <table class="details-table">
+            <tr><td class="label-col">Mobile number</td><td>: <span id="lblCell"></span></td></tr>
+            <tr><td class="label-col">Blood group</td><td>: <span id="lblBlood"></span></td></tr>
+            <tr><td class="label-col">Health ID No</td><td>: <span id="lblHealth"></span></td></tr>
+            <tr><td class="label-col">Height</td><td>: <span id="lblHeight"></span></td></tr>
+            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Residencial address</td><td>: <span id="lblResAddr"></span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 7.5px; color: #dc2626; font-weight: 700;">* If found, please return to the office address.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let uploadedPhotoData = "";
+
+const tgLogo = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9Q-g-sHYGd1cptAV4oQZmaeoqH_EBMpm50u_3VDrPPvk70cxWsHNujCob6reT7eFXi5CtVcE-XLppJ0JLPsb0pimZIkzXdRHn5t3UyyooLVYUizSNBxdeFAcnI5LOLsjzEZAR5urhyphenhyphenBnD8MVlPYUfWsc5IWg6VhveBg3fm3sNTWRaCG2OBswrIu83aBfq/s1600/government-of-telangana-logo-png_seeklogo-378992.png";
+const apLogo = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfRrQisuIh4QWaAUFuK-gg5yHy4WjUy9c1J3vYNOapvwcwdY3p1jK-1aE_Tepry-VKJ9619MtMvBtR13F_9bKqpA_OB7WiDRNTvMedS7x5fuit2a3RLvKDiCVyD64GJELA1lrDkB8mFAwkf8FI3hj6telepXS3BCnqOdEP-PkF85HRvpWD0jnA2O9AkbBd/s1600/2019071742.png";
+
+function previewImage(event) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    uploadedPhotoData = reader.result;
+    document.getElementById('cardPhoto').src = uploadedPhotoData;
+    document.getElementById('cardPhoto').style.display = 'block';
+    document.getElementById('photoPlaceholder').style.display = 'none';
+  }
+  if(event.target.files[0]) {
+    reader.readAsDataURL(event.target.files[0]);
+  }
+}
+
+function formatDateString(dateVal) {
+  if(!dateVal) return '-';
+  const parts = dateVal.split('-');
+  if(parts.length === 3) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dateVal;
+}
+
+function generateIDCard() {
+  const stateVal = document.getElementById('stateSelect').value;
+  const deptVal = document.getElementById('deptInput').value.toUpperCase();
+  const nameVal = document.getElementById('teacherName').value.trim();
+  const idVal = document.getElementById('idNo').value.trim();
+  const dobVal = document.getElementById('dob').value;
+  const workAddrVal = document.getElementById('workAddress').value.trim();
+
+  if(!nameVal || !idVal || !deptVal || !dobVal || !workAddrVal) {
+    alert("దయచేసి నక్షత్ర గుర్తు (*) ఉన్న అన్ని తప్పనిసరి ఫీల్డ్స్ భర్తీ చేయండి.\n(State, Department, Name, ID No, D.O.B, Working Address)");
+    return;
+  }
+
+  document.title = nameVal ? nameVal.replace(/[^a-zA-Z0-9]/g, "_") + "_IDCard" : "Employee_IDCard";
+
+  if(stateVal === "TG") {
+    document.getElementById('lblStateTitleFront').textContent = "GOVERNMENT OF TELANGANA";
+    document.getElementById('lblStateTitleBack').textContent = "GOVERNMENT OF TELANGANA";
+    document.getElementById('cardLogoFront').src = tgLogo;
+    document.getElementById('cardLogoBack').src = tgLogo;
+    document.getElementById('cardWatermarkFront').src = tgLogo;
+    document.getElementById('cardWatermarkBack').src = tgLogo;
+  } else {
+    document.getElementById('lblStateTitleFront').textContent = "GOVERNMENT OF ANDHRA PRADESH";
+    document.getElementById('lblStateTitleBack').textContent = "GOVERNMENT OF ANDHRA PRADESH";
+    document.getElementById('cardLogoFront').src = apLogo;
+    document.getElementById('cardLogoBack').src = apLogo;
+    document.getElementById('cardWatermarkFront').src = apLogo;
+    document.getElementById('cardWatermarkBack').src = apLogo;
+  }
+
+  document.getElementById('lblDeptTitleFront').textContent = deptVal;
+  document.getElementById('lblDeptTitleBack').textContent = deptVal;
+
+  document.getElementById('lblName').textContent = nameVal;
+  document.getElementById('lblFather').textContent = document.getElementById('fatherName').value.trim() || '-';
+  document.getElementById('lblID').textContent = idVal;
+  document.getElementById('lblDOB').textContent = formatDateString(dobVal);
+  document.getElementById('lblDesign').textContent = document.getElementById('designation').value.trim() || '-';
+  document.getElementById('lblAppoint').textContent = formatDateString(document.getElementById('appointed').value);
+  document.getElementById('lblWorkAddr').textContent = workAddrVal;
+
+  document.getElementById('lblCell').textContent = document.getElementById('cellNo').value || '-';
+  document.getElementById('lblBlood').textContent = document.getElementById('bloodGrp').value;
+  document.getElementById('lblHealth').textContent = document.getElementById('healthNo').value.trim() || '-';
+  
+  const heightVal = document.getElementById('height').value.trim();
+  document.getElementById('lblHeight').textContent = heightVal ? heightVal + " cms" : '-';
+  
+  document.getElementById('lblResAddr').textContent = document.getElementById('resAddress').value.trim() || '-';
+
+  const qrString = `EMPLOYEE ID CARD\nState: ${stateVal}\nName: ${nameVal}\nID: ${idVal}\nDept: ${deptVal}`;
+  document.getElementById('cardQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrString)}`;
+
+  // వ్యూ మార్పులు
+  document.getElementById('inputFormContainer').style.display = 'none';
+  document.getElementById('mainHeading').style.display = 'none';
+  document.getElementById('idCardPrintArea').style.display = 'block';
+  document.getElementById('actionButtonsGroup').style.display = 'flex';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToHomePage() {
+  document.getElementById('idCardPrintArea').style.display = 'none';
+  document.getElementById('actionButtonsGroup').style.display = 'none';
+  document.getElementById('inputFormContainer').style.display = 'block';
+  document.getElementById('mainHeading').style.display = 'block';
+  
+  document.title = "Government Employee ID Card Generator";
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function triggerSystemPrint() {
+  window.print();
+}
+</script>
+
+</body>
+</html>
