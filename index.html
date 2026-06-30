@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">Government Employee ID Card Generator</title>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <style>
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -54,10 +56,19 @@ h1 {
   margin-bottom: 25px;
 }
 
+.section-title {
+  text-align: center;
+  color: #0b5334;
+  font-size: 20px;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
 /* ===== Form Styles ===== */
 .form-container {
   max-width: 650px;
-  margin: 0 auto 40px auto;
+  margin: 0 auto 20px auto;
   background: #fff;
   padding: 30px;
   border-radius: 12px;
@@ -91,49 +102,66 @@ input:focus, select:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(11, 83, 52, 0.1);
 }
+
+/* ===== Payment & Promo Section ===== */
+.download-action-container {
+  max-width: 650px;
+  margin: 30px auto 60px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.promo-box {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto 20px auto;
+}
+.btn-promo {
+  background-color: #4b5563;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-promo:hover {
+  background-color: #374151;
+}
+.promo-message {
+  font-size: 13px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
 .btn-submit {
-  grid-column: span 2;
   background-color: #0b5334;
   color: white;
-  padding: 14px;
+  padding: 14px 30px;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 15px;
+  width: 100%;
+  max-width: 350px;
 }
 .btn-submit:hover {
   background-color: #073822;
 }
-
-/* Print Button Layout Below Preview */
-.btn-group-actions {
-  display: none;
-  justify-content: center;
-  max-width: 210mm;
-  margin: 20px auto 0 auto;
-}
-.btn-action-print {
-  padding: 12px 35px;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  color: white;
-  background-color: #1e3a8a;
-  min-width: 160px;
-}
-.btn-action-print:hover {
-  background-color: #172554;
+.note-text {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 12px;
 }
 
 /* ===== ID Card Layout ===== */
 #idCardPrintArea {
-  display: none; 
+  display: block; 
   max-width: 210mm; 
-  margin: 10px auto 30px auto;
+  margin: 10px auto 10px auto;
   background: transparent;
   box-sizing: border-box;
 }
@@ -145,7 +173,6 @@ input:focus, select:focus {
   flex-wrap: wrap; 
 }
 
-/* Single Card Box */
 .card-box {
   width: 95mm;
   height: 60mm;
@@ -159,7 +186,32 @@ input:focus, select:focus {
   print-color-adjust: exact !important;
 }
 
-/* Watermark */
+/* Secure Preview Watermark */
+.preview-only-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.preview-only-text {
+  color: rgba(220, 38, 38, 0.16);
+  font-size: 34px;
+  font-weight: 900;
+  transform: rotate(-25deg);
+  white-space: nowrap;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Arial Black', sans-serif;
+  user-select: none;
+}
+
 .gov-watermark {
   position: absolute;
   top: 55%;
@@ -172,7 +224,6 @@ input:focus, select:focus {
   z-index: 0;
 }
 
-/* Background Wave */
 .card-background-design {
   position: absolute;
   bottom: 0;
@@ -187,7 +238,6 @@ input:focus, select:focus {
   print-color-adjust: exact !important;
 }
 
-/* Header Section */
 .card-header {
   background: linear-gradient(135deg, #0b5334 0%, #147a4f 100%) !important;
   position: relative;
@@ -237,7 +287,6 @@ input:focus, select:focus {
   font-weight: 500;
 }
 
-/* Card Title Bar */
 .card-title-bar {
   background: #f8fafc !important;
   border-bottom: 1px solid #e2e8f0;
@@ -253,7 +302,6 @@ input:focus, select:focus {
   print-color-adjust: exact !important;
 }
 
-/* Content Area */
 .card-body {
   display: flex;
   padding: 6px 10px;
@@ -287,7 +335,6 @@ input:focus, select:focus {
   font-weight: 600;
 }
 
-/* Details Table */
 .details-container {
   flex: 1;
   padding-left: 10px;
@@ -320,7 +367,6 @@ input:focus, select:focus {
   width: 32%;
 }
 
-/* QR Code */
 .qr-container {
   width: 24mm;
   height: 24mm;
@@ -341,7 +387,6 @@ input:focus, select:focus {
   height: 100%;
 }
 
-/* Footer & Signature Section */
 .card-footer {
   position: absolute;
   bottom: 0;
@@ -385,14 +430,22 @@ input:focus, select:focus {
 
 /* ===== PRINT CONFIGURATION ===== */
 @media print {
+  /* Hide external tool bubbles/consoles injects if any */
+  div[class*="eruda"], div[id*="eruda"], div[class*="console"] {
+    display: none !important;
+  }
+  
   body {
     background: #ffffff;
     padding: 0;
     margin: 0;
     width: 210mm;
   }
-  .form-container, h1, .btn-group-actions, .nav-header {
+  .form-container, h1, .nav-header, .section-title, .download-action-container {
     display: none !important; 
+  }
+  .preview-only-overlay {
+    display: none !important;
   }
   #idCardPrintArea {
     display: block !important;
@@ -413,10 +466,6 @@ input:focus, select:focus {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  .details-table td {
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
-  }
 }
 </style>
 </head>
@@ -433,7 +482,7 @@ input:focus, select:focus {
   <div class="form-grid">
     <div>
       <label>Select State *</label>
-      <select id="stateSelect">
+      <select id="stateSelect" onchange="updateLiveCard()">
         <option value="TG">Telangana</option>
         <option value="AP">Andhra Pradesh</option>
       </select>
@@ -441,47 +490,47 @@ input:focus, select:focus {
 
     <div>
       <label>Department *</label>
-      <input type="text" id="deptInput" value="DEPARTMENT OF EDUCATION" placeholder="e.g. DEPARTMENT OF EDUCATION">
+      <input type="text" id="deptInput" value="DEPARTMENT OF EDUCATION" placeholder="e.g. DEPARTMENT OF EDUCATION" oninput="updateLiveCard()">
     </div>
 
     <div class="full-width">
       <label>Employee Name *</label>
-      <input type="text" id="teacherName" placeholder="e.g. Samudrala Lingamurthy">
+      <input type="text" id="teacherName" placeholder="e.g. Samudrala Lingamurthy" oninput="updateLiveCard()">
     </div>
 
     <div>
       <label>Father's Name</label>
-      <input type="text" id="fatherName" placeholder="e.g. Father Name">
+      <input type="text" id="fatherName" placeholder="e.g. Father Name" oninput="updateLiveCard()">
     </div>
 
     <div>
       <label>ID Number *</label>
-      <input type="text" id="idNo" placeholder="e.g. 21815481">
+      <input type="text" id="idNo" placeholder="e.g. 21815481" oninput="updateLiveCard()">
     </div>
 
     <div>
       <label>Date of Birth (D.O.B) *</label>
-      <input type="date" id="dob">
+      <input type="date" id="dob" onchange="updateLiveCard()">
     </div>
 
     <div>
       <label>Designation</label>
-      <input type="text" id="designation" placeholder="e.g. S.A Telugu">
+      <input type="text" id="designation" placeholder="e.g. S.A Telugu" oninput="updateLiveCard()">
     </div>
 
     <div>
       <label>Date of Appointment</label>
-      <input type="date" id="appointed">
+      <input type="date" id="appointed" onchange="updateLiveCard()">
     </div>
 
     <div>
       <label>Mobile Number (Cell No)</label>
-      <input type="tel" id="cellNo" pattern="[0-9]*" maxlength="10" placeholder="e.g. 9876543210" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      <input type="tel" id="cellNo" pattern="[0-9]*" maxlength="10" placeholder="e.g. 9876543210" oninput="this.value = this.value.replace(/[^0-9]/g, ''); updateLiveCard();">
     </div>
 
     <div>
       <label>Blood Group</label>
-      <select id="bloodGrp">
+      <select id="bloodGrp" onchange="updateLiveCard()">
         <option value="O+">O+</option>
         <option value="A+">A+</option>
         <option value="B+">B+</option>
@@ -495,41 +544,38 @@ input:focus, select:focus {
 
     <div>
       <label>Health ID No</label>
-      <input type="text" id="healthNo" placeholder="e.g. H12345">
+      <input type="text" id="healthNo" placeholder="e.g. H12345" oninput="updateLiveCard()">
     </div>
 
     <div>
       <label>Height (in cms)</label>
-      <input type="tel" id="height" pattern="[0-9]*" maxlength="3" placeholder="e.g. 170" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      <input type="tel" id="height" pattern="[0-9]*" maxlength="3" placeholder="e.g. 170" oninput="this.value = this.value.replace(/[^0-9]/g, ''); updateLiveCard();">
     </div>
 
     <div class="full-width">
       <label>Working Address *</label>
-      <input type="text" id="workAddress" placeholder="e.g. ZPHS Vidya nagar, Nalgonda.">
+      <input type="text" id="workAddress" placeholder="e.g. ZPHS Vidya nagar, Nalgonda." oninput="updateLiveCard()">
     </div>
 
     <div class="full-width">
       <label>Residential Address</label>
-      <input type="text" id="resAddress" placeholder="e.g. H.No: 1-2, Vill and mandal Nalgonda, Nalgonda dist.">
+      <input type="text" id="resAddress" placeholder="e.g. H.No: 1-2, Vill and mandal Nalgonda, Nalgonda dist." oninput="updateLiveCard()">
     </div>
 
     <div class="full-width">
       <label>Upload Photo</label>
       <input type="file" id="photoInput" accept="image/*" onchange="previewImage(event)">
     </div>
-
-    <button class="btn-submit" onclick="generateIDCard()">Generate ID Card Preview</button>
   </div>
 </div>
 
-<div class="btn-group-actions" id="actionButtonsGroup">
-  <button class="btn-action-print" onclick="triggerSystemPrint()">Print / Save as PDF</button>
-</div>
+<div class="section-title">ID Card Live Preview</div>
 
 <div id="idCardPrintArea">
   <div class="cards-container-box">
     
     <div class="card-box">
+      <div class="preview-only-overlay"><div class="preview-only-text">Preview Only</div></div>
       <div class="card-background-design"></div>
       <img class="gov-watermark" id="cardWatermarkFront" src="" alt="Watermark">
       
@@ -549,13 +595,13 @@ input:focus, select:focus {
         </div>
         <div class="details-container">
           <table class="details-table">
-            <tr><td class="label-col">Name</td><td>: <span id="lblName"></span></td></tr>
-            <tr><td class="label-col">Father's name</td><td>: <span id="lblFather"></span></td></tr>
-            <tr><td class="label-col">ID No</td><td>: <span id="lblID"></span></td></tr>
-            <tr><td class="label-col">Date of birth</td><td>: <span id="lblDOB"></span></td></tr>
-            <tr><td class="label-col">Designation</td><td>: <span id="lblDesign"></span></td></tr>
-            <tr><td class="label-col">Appointed on</td><td>: <span id="lblAppoint"></span></td></tr>
-            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Office address</td><td>: <span id="lblWorkAddr"></span></td></tr>
+            <tr><td class="label-col">Name</td><td>: <span id="lblName">-</span></td></tr>
+            <tr><td class="label-col">Father's name</td><td>: <span id="lblFather">-</span></td></tr>
+            <tr><td class="label-col">ID No</td><td>: <span id="lblID">-</span></td></tr>
+            <tr><td class="label-col">Date of birth</td><td>: <span id="lblDOB">-</span></td></tr>
+            <tr><td class="label-col">Designation</td><td>: <span id="lblDesign">-</span></td></tr>
+            <tr><td class="label-col">Appointed on</td><td>: <span id="lblAppoint">-</span></td></tr>
+            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Office address</td><td>: <span id="lblWorkAddr">-</span></td></tr>
           </table>
         </div>
       </div>
@@ -569,6 +615,7 @@ input:focus, select:focus {
     </div>
 
     <div class="card-box">
+      <div class="preview-only-overlay"><div class="preview-only-text">Preview Only</div></div>
       <div class="card-background-design"></div>
       <img class="gov-watermark" id="cardWatermarkBack" src="" alt="Watermark">
       
@@ -587,11 +634,11 @@ input:focus, select:focus {
         </div>
         <div class="details-container" style="padding-left:12px;">
           <table class="details-table">
-            <tr><td class="label-col">Mobile number</td><td>: <span id="lblCell"></span></td></tr>
-            <tr><td class="label-col">Blood group</td><td>: <span id="lblBlood"></span></td></tr>
-            <tr><td class="label-col">Health ID No</td><td>: <span id="lblHealth"></span></td></tr>
-            <tr><td class="label-col">Height</td><td>: <span id="lblHeight"></span></td></tr>
-            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Residencial address</td><td>: <span id="lblResAddr"></span></td></tr>
+            <tr><td class="label-col">Mobile number</td><td>: <span id="lblCell">-</span></td></tr>
+            <tr><td class="label-col">Blood group</td><td>: <span id="lblBlood">O+</span></td></tr>
+            <tr><td class="label-col">Health ID No</td><td>: <span id="lblHealth">-</span></td></tr>
+            <tr><td class="label-col">Height</td><td>: <span id="lblHeight">-</span></td></tr>
+            <tr class="address-row" style="font-size: 8px;"><td class="label-col">Residencial address</td><td>: <span id="lblResAddr">-</span></td></tr>
           </table>
         </div>
       </div>
@@ -603,11 +650,28 @@ input:focus, select:focus {
   </div>
 </div>
 
+<div class="download-action-container">
+  <div class="promo-box">
+    <input type="text" id="promoInput" placeholder="Enter Promo Code (e.g. NEW100)">
+    <button class="btn-promo" onclick="applyPromoCode()">Apply</button>
+  </div>
+  <div id="promoMsg" class="promo-message"></div>
+
+  <button class="btn-submit" id="payBtn" onclick="handlePaymentAction()">Pay & Download HD Card (₹20)</button>
+  <div class="note-text">గమనిక: పైన వివరాలు సరిచూసుకున్న తర్వాతే డౌన్లోడ్ బటన్ నొక్కండి.</div>
+</div>
+
 <script>
 let uploadedPhotoData = "";
+let isPromoApplied = false;
+let currentAmount = 2000; // 2000 paise = ₹20
 
 const tgLogo = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9Q-g-sHYGd1cptAV4oQZmaeoqH_EBMpm50u_3VDrPPvk70cxWsHNujCob6reT7eFXi5CtVcE-XLppJ0JLPsb0pimZIkzXdRHn5t3UyyooLVYUizSNBxdeFAcnI5LOLsjzEZAR5urhyphenhyphenBnD8MVlPYUfWsc5IWg6VhveBg3fm3sNTWRaCG2OBswrIu83aBfq/s1600/government-of-telangana-logo-png_seeklogo-378992.png";
 const apLogo = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfRrQisuIh4QWaAUFuK-gg5yHy4WjUy9c1J3vYNOapvwcwdY3p1jK-1aE_Tepry-VKJ9619MtMvBtR13F_9bKqpA_OB7WiDRNTvMedS7x5fuit2a3RLvKDiCVyD64GJELA1lrDkB8mFAwkf8FI3hj6telepXS3BCnqOdEP-PkF85HRvpWD0jnA2O9AkbBd/s1600/2019071742.png";
+
+window.onload = function() {
+  updateLiveCard();
+};
 
 function previewImage(event) {
   const reader = new FileReader();
@@ -631,20 +695,13 @@ function formatDateString(dateVal) {
   return dateVal;
 }
 
-function generateIDCard() {
+function updateLiveCard() {
   const stateVal = document.getElementById('stateSelect').value;
   const deptVal = document.getElementById('deptInput').value.toUpperCase();
   const nameVal = document.getElementById('teacherName').value.trim();
   const idVal = document.getElementById('idNo').value.trim();
   const dobVal = document.getElementById('dob').value;
   const workAddrVal = document.getElementById('workAddress').value.trim();
-
-  if(!nameVal || !idVal || !deptVal || !dobVal || !workAddrVal) {
-    alert(" * గుర్తు ఉన్న అన్ని ఫీల్డ్స్ ఫిల్ చేయండి.\n(State, Department, Name, ID No, D.O.B, Working Address)");
-    return;
-  }
-
-  document.title = nameVal ? nameVal.replace(/[^a-zA-Z0-9]/g, "_") + "_IDCard" : "Employee_IDCard";
 
   if(stateVal === "TG") {
     document.getElementById('lblStateTitleFront').textContent = "GOVERNMENT OF TELANGANA";
@@ -662,16 +719,15 @@ function generateIDCard() {
     document.getElementById('cardWatermarkBack').src = apLogo;
   }
 
-  document.getElementById('lblDeptTitleFront').textContent = deptVal;
-  document.getElementById('lblDeptTitleBack').textContent = deptVal;
-
-  document.getElementById('lblName').textContent = nameVal;
+  document.getElementById('lblDeptTitleFront').textContent = deptVal || 'DEPARTMENT OF EDUCATION';
+  document.getElementById('lblDeptTitleBack').textContent = deptVal || 'DEPARTMENT OF EDUCATION';
+  document.getElementById('lblName').textContent = nameVal || '-';
   document.getElementById('lblFather').textContent = document.getElementById('fatherName').value.trim() || '-';
-  document.getElementById('lblID').textContent = idVal;
+  document.getElementById('lblID').textContent = idVal || '-';
   document.getElementById('lblDOB').textContent = formatDateString(dobVal);
   document.getElementById('lblDesign').textContent = document.getElementById('designation').value.trim() || '-';
   document.getElementById('lblAppoint').textContent = formatDateString(document.getElementById('appointed').value);
-  document.getElementById('lblWorkAddr').textContent = workAddrVal;
+  document.getElementById('lblWorkAddr').textContent = workAddrVal || '-';
 
   document.getElementById('lblCell').textContent = document.getElementById('cellNo').value || '-';
   document.getElementById('lblBlood').textContent = document.getElementById('bloodGrp').value;
@@ -679,28 +735,78 @@ function generateIDCard() {
   
   const heightVal = document.getElementById('height').value.trim();
   document.getElementById('lblHeight').textContent = heightVal ? heightVal + " cms" : '-';
-  
   document.getElementById('lblResAddr').textContent = document.getElementById('resAddress').value.trim() || '-';
 
-  const qrString = `EMPLOYEE ID CARD\nState: ${stateVal}\nName: ${nameVal}\nID: ${idVal}\nDept: ${deptVal}`;
+  const qrString = `EMPLOYEE ID CARD\nState: ${stateVal}\nName: ${nameVal || 'N/A'}\nID: ${idVal || 'N/A'}\nDept: ${deptVal}`;
   document.getElementById('cardQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrString)}`;
+}
 
-  // వ్యూ మార్పులు
-  document.getElementById('inputFormContainer').style.display = 'none';
-  document.getElementById('mainHeading').style.display = 'none';
-  document.getElementById('idCardPrintArea').style.display = 'block';
-  document.getElementById('actionButtonsGroup').style.display = 'flex';
+// Promo Code validation logic
+function applyPromoCode() {
+  const code = document.getElementById('promoInput').value.trim().toUpperCase();
+  const msgElement = document.getElementById('promoMsg');
+  const payBtn = document.getElementById('payBtn');
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(code === "NEW100") {
+    isPromoApplied = true;
+    currentAmount = 0;
+    msgElement.style.color = "#16a34a";
+    msgElement.textContent = "Promo 'NEW100' applied successfully! 100% Discount.";
+    payBtn.textContent = "Download HD Card (FREE)";
+  } else {
+    isPromoApplied = false;
+    currentAmount = 2000;
+    msgElement.style.color = "#dc2626";
+    msgElement.textContent = "Invalid Promo Code.";
+    payBtn.textContent = "Pay & Download HD Card (₹20)";
+  }
+}
+
+// Check validation before trigger payment or download
+function handlePaymentAction() {
+  const nameVal = document.getElementById('teacherName').value.trim();
+  const idVal = document.getElementById('idNo').value.trim();
+  const dobVal = document.getElementById('dob').value;
+  const workAddrVal = document.getElementById('workAddress').value.trim();
+
+  if(!nameVal || !idVal || !dobVal || !workAddrVal) {
+    alert(" * గుర్తు ఉన్న అన్ని ఫీల్డ్స్ తప్పనిసరిగా ఫిల్ చేయండి.\n(Name, ID No, D.O.B, Working Address)");
+    return;
+  }
+
+  document.title = nameVal.replace(/[^a-zA-Z0-9]/g, "_") + "_IDCard";
+
+  if (isPromoApplied && currentAmount === 0) {
+    // Free download if NEW100 applied
+    window.print();
+  } else {
+    // Razorpay Integration Popup standard configuration
+    var options = {
+      "key": "rzp_live_T18sE5oDk1k8ey", // ఇక్కడ మీ ఒరిజినల్ Razorpay Key ID ని రీప్లేస్ చేయండి
+      "amount": currentAmount, 
+      "currency": "INR",
+      "name": "FillAndPrint Portal",
+      "description": "Employee Identity Card Download Fee",
+      "handler": function (response){
+         // పేమెంట్ సక్సెస్ అయ్యాక ఈ బ్లాక్ రన్ అవుతుంది
+         alert("Payment Successful! Reference ID: " + response.razorpay_payment_id);
+         window.print();
+      },
+      "prefill": {
+        "name": nameVal,
+        "contact": document.getElementById('cellNo').value || ""
+      },
+      "theme": {
+        "color": "#0b5334"
+      }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
 }
 
 function goToHomePage() {
-  // మీ మెయిన్ డాష్‌బోర్డ్ హోమ్ పేజీకి రీడైరెక్ట్ చేయడానికి
   window.location.href = "https://fillandprint.github.io";
-}
-
-function triggerSystemPrint() {
-  window.print();
 }
 </script>
 
